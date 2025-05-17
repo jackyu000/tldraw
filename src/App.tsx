@@ -3,29 +3,9 @@ import { Tldraw, Editor, createShapeId, AssetRecordType, toRichText } from '@tld
 import type { TLParentId, TLTextShape } from '@tldraw/tldraw';
 import '@tldraw/tldraw/tldraw.css';
 
-// Sample JSON data to visualize
-const sampleData = {
-  id: 1,
-  name: "John Doe",
-  age: 30,
-  active: true,
-  thumbnail: "https://picsum.photos/200/200",
-  address: {
-    street: "123 Main St",
-    city: "Anytown",
-    country: "USA",
-    coordinates: {
-      lat: 40.7128,
-      lng: -74.0060
-    }
-  },
-  tags: ["developer", "designer", "photographer"],
-  skills: {
-    programming: ["JavaScript", "TypeScript", "Python"],
-    design: ["UI/UX", "Figma", "Sketch"],
-    other: ["Photography", "Writing"]
-  }
-};
+// Import sample data array
+import { sampleDataArray } from './sampleData';
+
 
 // Helper to check if a string is an image URL
 const isImageUrl = (key: string, value: any): boolean => {
@@ -288,11 +268,27 @@ function App() {
       editor.deleteShapes(shapes.map(shape => shape.id));
     }
     
-    // Add the JSON data to the canvas
+    // Get the current page ID
     const pageId = editor.getCurrentPageId() as TLParentId;
-    addShapesFromData(editor, sampleData, pageId, 50, 50);
     
-    // Zoom to fit
+    // Calculate starting positions for records in a grid layout
+    const rowHeight = 500; // Height estimate for each record
+    const columnWidth = 400; // Width estimate for each record
+    const recordsPerRow = 2; // Number of records per row
+    
+    // Add all sample records to the canvas
+    sampleDataArray.forEach((record, index) => {
+      // Calculate position in grid
+      const row = Math.floor(index / recordsPerRow);
+      const col = index % recordsPerRow;
+      const x = 50 + (col * columnWidth);
+      const y = 50 + (row * rowHeight);
+      
+      // Visualize this record
+      addShapesFromData(editor, record, pageId, x, y);
+    });
+    
+    // Zoom to fit all content
     editor.zoomToFit();
   }, []);
 
